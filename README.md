@@ -39,3 +39,18 @@ Example: `38;2;164;198;57` set foreground color to rgb(164, 198, 57)
 
 2 -> R;G;B  
 5 -> X (Only support from 0 to 15, see: [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors))  
+
+## Setup
+```java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        AnsiTextView textView = findViewById(R.id.ansiView); // It's "AndroidANSI!" but with color & style
+        textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[0;73m!",
+                textView.FLAG_PARSE_DISABLE_SUBSCRIPT); // Also disable superscript
+    }
+}
+```
