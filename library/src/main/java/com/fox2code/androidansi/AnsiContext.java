@@ -166,20 +166,20 @@ public final class AnsiContext {
         ansiContext.style = this.style;
     }
 
-    public Spannable parseAsSpannable(@NonNull String text) {
-        return AnsiParser.parseAsSpannable(text, this);
+    public Spannable parseAsSpannable(@NonNull AnsiTextView view, @NonNull String text) {
+        return view.parseAsSpannable(text, this);
     }
 
-    public Spannable parseAsSpannable(@NonNull String text, int parseFlags) {
-        return AnsiParser.parseAsSpannable(text, this, parseFlags);
+    public Spannable parseAsSpannable(@NonNull AnsiTextView view, @NonNull String text, int parseFlags) {
+        return view.parseAsSpannable(text, this, parseFlags);
     }
 
-    public void setAnsiText(@NonNull TextView text, @NonNull String ansiText) {
-        text.setText(AnsiParser.parseAsSpannable(ansiText, this));
+    public void setAnsiText(@NonNull AnsiTextView view, @NonNull String ansiText) {
+        view.setText(view.parseAsSpannable(ansiText, this));
     }
 
-    public void setAnsiText(@NonNull TextView text, @NonNull String ansiText, int parseFlags) {
-        text.setText(AnsiParser.parseAsSpannable(ansiText, this, parseFlags));
+    public void setAnsiText(@NonNull AnsiTextView view, @NonNull String ansiText, int parseFlags) {
+        view.setText(view.parseAsSpannable(ansiText, this, parseFlags));
     }
 
     public AnsiTextSpan toAnsiTextSpan() {

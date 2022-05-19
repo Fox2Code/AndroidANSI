@@ -1,9 +1,11 @@
 package com.fox2code.androidansi;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -12,38 +14,50 @@ import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 
-public final class AnsiParser {
-    private static final String TAG = "AnsiParser";
+public final class AnsiTextView extends TextView {
+    private final String TAG = "AnsiTextView";
     // ANSI Has 2 escape sequences, let support both
-    private static final String ESCAPE1 = "\\e[";
-    private static final String ESCAPE2 = "\u001B[";
+    private final String ESCAPE1 = "\\e[";
+    private final String ESCAPE2 = "\u001B[";
 
     // Any disabled attributes are unmodified.
     // Disable colors, implies FLAG_PARSE_DISABLE_EXTRAS_COLORS
-    public static final int FLAG_PARSE_DISABLE_COLORS = 0x0001;
+    public final int FLAG_PARSE_DISABLE_COLORS = 0x0001;
     // Disable attributes like italic, bold, underline and crossed out text
     // implies FLAG_PARSE_DISABLE_SUBSCRIPT
-    public static final int FLAG_PARSE_DISABLE_ATTRIBUTES    = 0x0002;
+    public final int FLAG_PARSE_DISABLE_ATTRIBUTES    = 0x0002;
     // Disable extra color customization other than foreground or background
-    public static final int FLAG_PARSE_DISABLE_EXTRAS_COLORS = 0x0004;
+    public final int FLAG_PARSE_DISABLE_EXTRAS_COLORS = 0x0004;
     // Disable subscript and superscript text
-    public static final int FLAG_PARSE_DISABLE_SUBSCRIPT   = 0x0008;
+    public final int FLAG_PARSE_DISABLE_SUBSCRIPT   = 0x0008;
 
-    public static Spannable parseAsSpannable(@NonNull String text) {
+    public AnsiTextView(Context context) {
+        super(context);
+    }
+
+    public AnsiTextView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public AnsiTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    public Spannable parseAsSpannable(@NonNull String text) {
         return parseAsSpannable(text, null);
     }
 
-    public static Spannable parseAsSpannable(
+    public Spannable parseAsSpannable(
             @NonNull String text, @Nullable AnsiContext ansiContext) {
         return parseAsSpannable(text, ansiContext, 0);
     }
 
-    public static Spannable parseAsSpannable(
+    public Spannable parseAsSpannable(
             @NonNull String text, int parseFlags) {
         return parseAsSpannable(text, null, parseFlags);
     }
 
-    public static Spannable parseAsSpannable(
+    public Spannable parseAsSpannable(
             @NonNull String text, @Nullable AnsiContext ansiContext, int parseFlags) {
         if (text.length() == 0) return new SpannableString(text);
         ColorTransformer transformer = AnsiConstants.NO_OP_TRANSFORMER;
@@ -93,7 +107,7 @@ public final class AnsiParser {
         return spannableStringBuilder;
     }
 
-    public static void parseTokens(String[] tokens, AnsiContext ansiContext,int parseFlags) {
+    public void parseTokens(String[] tokens, AnsiContext ansiContext,int parseFlags) {
         int tokenIndex = 0;
         while (tokenIndex < tokens.length) {
             String token = tokens[tokenIndex];
@@ -265,14 +279,12 @@ public final class AnsiParser {
             }
         }
     }
-
-    public static void setAnsiText(@NonNull TextView text,@NonNull String ansiText) {
-        text.setText(parseAsSpannable(ansiText));
+    
+    public void setAnsiText(@NonNull String ansiText) {
+        super.setText(parseAsSpannable(ansiText));
     }
 
-    public static void setAnsiText(@NonNull TextView text,@NonNull String ansiText, int parseFlags) {
-        text.setText(parseAsSpannable(ansiText, parseFlags));
+    public void setAnsiText(@NonNull String ansiText, int parseFlags) {
+        super.setText(parseAsSpannable(ansiText, parseFlags));
     }
-
-    private AnsiParser() {}
 }
