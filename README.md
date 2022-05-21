@@ -39,3 +39,51 @@ Example: `38;2;164;198;57` set foreground color to rgb(164, 198, 57)
 
 2 -> R;G;B  
 5 -> X (Only support from 0 to 15, see: [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors))  
+
+
+# Setup
+## Legacy
+```java
+TextView textView = findViewById(R.id.ansiView);
+AnsiParser.setAnsiText(textView, // It's "AndroidANSI!" but with color & style
+        "\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[0;73m!",
+        AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT); // Also disable superscript
+```
+
+## TextView
+**Layout**
+```xml
+<com.fox2code.androidansi.AnsiTextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/ansiView" />
+```
+**Activity**
+```java
+AnsiTextView textView = findViewById(R.id.ansiView);
+textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[0;73m!",
+        AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT);
+```
+
+## TextView w/o Java (Currently not working)
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.fox2code.androidansi.AnsiTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:setAnsiText="\e[38;5;82mHello \e[38;5;198mWorld"
+        android:id="@+id/ansiView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
