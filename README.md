@@ -1,7 +1,7 @@
 # AndroidANSI  
 Android ANSI rendering library!  
 
-See [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code)  
+See [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code)
 for more info on ANSI escape codes.  
 
 ## Supported ANSI Codes  
@@ -65,7 +65,7 @@ textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[
         AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT);
 ```
 
-## TextView w/o Java (Currently not working)
+## TextView w/o Java (WIP)
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -78,7 +78,7 @@ textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[
     <com.fox2code.androidansi.AnsiTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:setAnsiText="\e[38;5;82mHello \e[38;5;198mWorld"
+        app:ansiText="\e[38;5;82mHello \e[38;5;198mWorld"
         android:id="@+id/ansiView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,3 +87,5 @@ textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
+
+Note: AnsiTextView support Emoji2 if the library `androidx.emoji2:emoji2-views-helper:*` is added.

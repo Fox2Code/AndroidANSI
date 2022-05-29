@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AnsiTextView">
-        <attr name="setAnsiText" format="string" />
+        <attr name="ansiText" format="string" />
+        <attr name="ansiParseFlags">
+            <flag name="none" value="0x0000" />
+            <flag name="disableColors" value="0x0001" />
+            <flag name="disableAttributes" value="0x0002" />
+            <flag name="disableExtrasColors" value="0x0004" />
+            <flag name="disableSubscript" value="0x0008" />
+        </attr>
     </declare-styleable>
 </resources>
