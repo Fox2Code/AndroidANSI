@@ -25,9 +25,22 @@ public final class AnsiParser {
     // implies FLAG_PARSE_DISABLE_SUBSCRIPT
     public static final int FLAG_PARSE_DISABLE_ATTRIBUTES    = 0x0002;
     // Disable extra color customization other than foreground or background
+    // Useful to have consistent display across Android versions
     public static final int FLAG_PARSE_DISABLE_EXTRAS_COLORS = 0x0004;
     // Disable subscript and superscript text
     public static final int FLAG_PARSE_DISABLE_SUBSCRIPT   = 0x0008;
+    // Disable all attributes changes
+    public static final int FLAGS_DISABLE_ALL =
+            FLAG_PARSE_DISABLE_COLORS | FLAG_PARSE_DISABLE_ATTRIBUTES;
+
+    /**
+     * Replace escape sequence using a control character by a normal escape sequence
+     * This allow to use {@link String#trim()} without the risk for the escape sequence
+     * to be elso trimmed
+     */
+    public static String patchEscapeSequence(String string) {
+        return string.replace(ESCAPE2, ESCAPE1);
+    }
 
     public static Spannable parseAsSpannable(@NonNull String text) {
         return parseAsSpannable(text, null);
@@ -272,6 +285,10 @@ public final class AnsiParser {
 
     public static void setAnsiText(@NonNull TextView text,@NonNull String ansiText, int parseFlags) {
         text.setText(parseAsSpannable(ansiText, parseFlags));
+    }
+
+    public static String trimEscapeSequences(String string) {
+        return parseAsSpannable(string, FLAGS_DISABLE_ALL).toString();
     }
 
     private AnsiParser() {}
