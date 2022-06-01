@@ -40,6 +40,8 @@ Example: `38;2;164;198;57` set foreground color to rgb(164, 198, 57)
 2 -> R;G;B  
 5 -> X (Only support from 0 to 15, see: [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors))  
 
+Note: `String.trim()` may remove escape sequences, use `AnsiParser.patchEscapeSequence` first 
+to avoid escape sequences from being trimmed.
 
 # Setup
 
@@ -68,7 +70,7 @@ repositories {
 
 
 dependencies {
-    implementation 'com.github.Fox2Code:AndroidANSI:1.0.0'
+    implementation 'com.github.Fox2Code:AndroidANSI:1.0.1'
 }
 ```
 
