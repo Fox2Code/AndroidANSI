@@ -5,12 +5,14 @@ import static com.fox2code.androidansi.AnsiParser.parseAsSpannable;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.emoji2.viewsintegration.EmojiTextViewHelper;
 
 public class AnsiTextView extends TextView {
@@ -20,6 +22,7 @@ public class AnsiTextView extends TextView {
     public static final int FLAG_PARSE_DISABLE_SUBSCRIPT = AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT;
 
     private Object mEmojiTextViewHelper; // Hold reference without requiring hard references
+    private boolean mIsSetTypefaceProcessing = false;
     private int parseFlags = 0;
 
     public AnsiTextView(Context context) {
@@ -91,6 +94,23 @@ public class AnsiTextView extends TextView {
         super.setAllCaps(allCaps);
         if (this.mEmojiTextViewHelper != null) {
             ((EmojiTextViewHelper) this.mEmojiTextViewHelper).setAllCaps(allCaps);
+        }
+    }
+
+    @Override
+    public void setTypeface(@Nullable Typeface tf, int style) {
+        if (this.mIsSetTypefaceProcessing) {
+            // b/151782655
+            // Some device up to API19 recursively calls setTypeface. To avoid infinity recursive
+            // setTypeface call, exit if we know this is re-entrant call.
+            return;
+        }
+
+        mIsSetTypefaceProcessing = true;
+        try {
+            super.setTypeface(tf, style);
+        } finally {
+            mIsSetTypefaceProcessing = false;
         }
     }
 }

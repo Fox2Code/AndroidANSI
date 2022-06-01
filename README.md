@@ -42,7 +42,37 @@ Example: `38;2;164;198;57` set foreground color to rgb(164, 198, 57)
 
 
 # Setup
-## Legacy
+
+## Gradle
+
+Add jitpack, example to add to `settings.gradle`:
+```groovy
+// Only add if `dependencyResolutionManagement` already exists
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+}
+```
+
+
+```groovy
+// Only add "repositories" if "dependencyResolutionManagement" didn't exists in "settings.gradle"
+repositories {
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+
+dependencies {
+    implementation 'com.github.Fox2Code:AndroidANSI:1.0.0'
+}
+```
+
+## TextView
 ```java
 TextView textView = findViewById(R.id.ansiView);
 AnsiParser.setAnsiText(textView, // It's "AndroidANSI!" but with color & style
@@ -50,7 +80,7 @@ AnsiParser.setAnsiText(textView, // It's "AndroidANSI!" but with color & style
         AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT); // Also disable superscript
 ```
 
-## TextView
+## AnsiTextView
 **Layout**
 ```xml
 <com.fox2code.androidansi.AnsiTextView
@@ -65,7 +95,7 @@ textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[
         AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT);
 ```
 
-## TextView w/o Java (WIP)
+## AnsiTextView w/o Java/Kotlin (WIP)
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
