@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
 
@@ -38,24 +39,37 @@ public final class AnsiParser {
      * This allow to use {@link String#trim()} without the risk for the escape sequence
      * to be elso trimmed
      */
-    public static String patchEscapeSequence(String string) {
+    @Contract(pure = true, value = "null -> fail")
+    public static String patchEscapeSequences(String string) {
         return string.replace(ESCAPE2, ESCAPE1);
     }
 
+    /**
+     * Remove all escape sequences in a string.
+     */
+    @Contract(pure = true, value = "null -> fail")
+    public static String removeEscapeSequences(String string) {
+        return string.replace(ESCAPE1, "").replace(ESCAPE2, "");
+    }
+
+    @Contract(pure = true)
     public static Spannable parseAsSpannable(@NonNull String text) {
         return parseAsSpannable(text, null);
     }
 
+    @Contract(pure = true)
     public static Spannable parseAsSpannable(
             @NonNull String text, @Nullable AnsiContext ansiContext) {
         return parseAsSpannable(text, ansiContext, 0);
     }
 
+    @Contract(pure = true)
     public static Spannable parseAsSpannable(
             @NonNull String text, int parseFlags) {
         return parseAsSpannable(text, null, parseFlags);
     }
 
+    @Contract(pure = true)
     public static Spannable parseAsSpannable(
             @NonNull String text, @Nullable AnsiContext ansiContext, int parseFlags) {
         if (text.length() == 0) return new SpannableString(text);
@@ -285,10 +299,6 @@ public final class AnsiParser {
 
     public static void setAnsiText(@NonNull TextView text,@NonNull String ansiText, int parseFlags) {
         text.setText(parseAsSpannable(ansiText, parseFlags));
-    }
-
-    public static String trimEscapeSequences(String string) {
-        return parseAsSpannable(string, FLAGS_DISABLE_ALL).toString();
     }
 
     private AnsiParser() {}

@@ -7,6 +7,8 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Objects;
 
 public final class AnsiContext {
@@ -142,12 +144,15 @@ public final class AnsiContext {
     }
 
     public void reset() {
+        if (this.isImmutable)
+            throw new IllegalStateException();
         this.foreground = this.defaultForeground;
         this.background = this.defaultBackground;
         this.underline = Color.TRANSPARENT;
         this.style = 0;
     }
 
+    @Contract("null -> fail")
     public void copyStateFrom(AnsiContext ansiContext) {
         if (this.isImmutable)
             throw new IllegalStateException();
@@ -157,6 +162,7 @@ public final class AnsiContext {
         this.style = ansiContext.style;
     }
 
+    @Contract("null -> fail")
     public void copyStateTo(AnsiContext ansiContext) {
         if (ansiContext.isImmutable)
             throw new IllegalStateException();

@@ -54,7 +54,7 @@ public class AnsiTextView extends TextView {
         try { // Using "new" for optional classes is ok with ART
             mEmojiTextViewHelper = new EmojiTextViewHelper(this, false);
             ((EmojiTextViewHelper) mEmojiTextViewHelper).updateTransformationMethod();
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
             mEmojiTextViewHelper = null;
         }
     }
@@ -62,6 +62,7 @@ public class AnsiTextView extends TextView {
     private void readAttr(Context context, AttributeSet attrs) {
         TypedArray a = null;
         try {
+            //noinspection resource (Cause it require newer SDK)
             a = context.obtainStyledAttributes(attrs, R.styleable.AnsiTextView);
             @NonNull String text = a.getString(R.styleable.AnsiTextView_ansiText);
             int parseFlags = a.getInt(R.styleable.AnsiTextView_ansiText, -1);

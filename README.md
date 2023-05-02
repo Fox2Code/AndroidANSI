@@ -70,7 +70,9 @@ repositories {
 
 
 dependencies {
-    implementation 'com.github.Fox2Code:AndroidANSI:1.0.1'
+    implementation 'com.github.Fox2Code.AndroidANSI:library:1.1.0'
+    // You can also add the ktx module for the kotlin extension.
+    implementation 'com.github.Fox2Code.AndroidANSI:library-ktx:1.1.0'
 }
 ```
 

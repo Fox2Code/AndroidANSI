@@ -4,6 +4,8 @@ import android.graphics.Color;
 
 import androidx.annotation.ColorInt;
 
+import org.jetbrains.annotations.Contract;
+
 // https://gist.github.com/Prakasaka/219fe5695beeb4d6311583e79933a009
 // https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 public final class AnsiConstants {
@@ -45,6 +47,7 @@ public final class AnsiConstants {
             COLOR_BRIGHT_WHITE   = Color.rgb(255, 255, 255);
 
     @ColorInt
+    @Contract(pure = true)
     static int colorForAnsiCode(int colorAnsi) {
         int m = colorAnsi / 10;
         if (m == 4 || m == 10)

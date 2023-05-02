@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "AndroidANSI"
 
 include ':library'
+include ':library-ktx'
 include ':androidansiapp'
