@@ -8,3 +8,13 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+tasks.register('publishToMavenLocal', Task)
+
+subprojects {
+    afterEvaluate {
+        if (project.plugins.hasPlugin('maven-publish')) {
+            rootProject.tasks.publishToMavenLocal.dependsOn(publishToMavenLocal)
+        }
+    }
+}
