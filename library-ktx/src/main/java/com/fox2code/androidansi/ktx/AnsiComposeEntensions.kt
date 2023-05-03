@@ -15,6 +15,12 @@ import com.fox2code.androidansi.AnsiParser
 import com.fox2code.androidansi.builder.AnnotatedStringAnsiComponentBuilder
 import org.jetbrains.annotations.Contract
 
+private fun intAsColor(color: Int): Color {
+    return Color(android.graphics.Color.red(color),
+            android.graphics.Color.green(color),
+            android.graphics.Color.blue(color))
+}
+
 @Contract(pure = true)
 fun AnsiContext.toAnsiSpanStyle(): SpanStyle {
     var baselineShift: BaselineShift = BaselineShift.None
@@ -23,7 +29,7 @@ fun AnsiContext.toAnsiSpanStyle(): SpanStyle {
     } else if (this.style and AnsiConstants.FLAG_STYLE_SUPERSCRIPT != 0) {
         baselineShift = BaselineShift.Superscript
     }
-    val backgroundColor: Color = when(val background: ULong =
+    val backgroundColor: Color = when(
             this.background.toULong() or 0xFF000000.toULong()) {
         this.defaultBackground.toULong() -> Color.Unspecified
         0xFF000000.toULong() -> Color.Black
@@ -37,9 +43,9 @@ fun AnsiContext.toAnsiSpanStyle(): SpanStyle {
         0xFFFFFF00.toULong() -> Color.Yellow
         0xFFFFFF00.toULong() -> Color.Cyan
         0xFFFFFF00.toULong() -> Color.Magenta
-        else -> Color(background)
+        else -> intAsColor(this.background)
     }
-    var foregroundColor: Color = when(val foreground: ULong =
+    var foregroundColor: Color = when(
             this.foreground.toULong() or 0xFF000000.toULong()) {
         this.defaultForeground.toULong() -> Color.Unspecified
         0xFF000000.toULong() -> Color.Black
@@ -53,7 +59,7 @@ fun AnsiContext.toAnsiSpanStyle(): SpanStyle {
         0xFFFFFF00.toULong() -> Color.Yellow
         0xFFFFFF00.toULong() -> Color.Cyan
         0xFFFFFF00.toULong() -> Color.Magenta
-        else -> Color(foreground)
+        else -> intAsColor(foreground)
     }
     val textDecoration: TextDecoration = when(this.style and (
             AnsiConstants.FLAG_STYLE_UNDERLINE or AnsiConstants.FLAG_STYLE_STRIKE
