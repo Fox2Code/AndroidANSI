@@ -2,13 +2,16 @@ package com.fox2code.androidansi;
 
 import android.graphics.Color;
 import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.fox2code.androidansi.builder.AnsiComponentBuilder;
+import com.fox2code.androidansi.builder.SpannableAnsiComponentBuilder;
+import com.fox2code.androidansi.builder.StringAnsiComponentBuilder;
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
@@ -18,18 +21,22 @@ public final class AnsiParser {
     // ANSI Has 2 escape sequences, let support both
     private static final String ESCAPE1 = "\\e[";
     private static final String ESCAPE2 = "\u001B[";
+    private static final StringAnsiComponentBuilder RESETTABLE_BUILDER =
+            new StringAnsiComponentBuilder(true);
 
     // Any disabled attributes are unmodified.
     // Disable colors, implies FLAG_PARSE_DISABLE_EXTRAS_COLORS
     public static final int FLAG_PARSE_DISABLE_COLORS = 0x0001;
     // Disable attributes like italic, bold, underline and crossed out text
-    // implies FLAG_PARSE_DISABLE_SUBSCRIPT
+    // implies FLAG_PARSE_DISABLE_SUBSCRIPT and FLAG_PARSE_DISABLE_FONT_ALTERING
     public static final int FLAG_PARSE_DISABLE_ATTRIBUTES    = 0x0002;
     // Disable extra color customization other than foreground or background
     // Useful to have consistent display across Android versions
     public static final int FLAG_PARSE_DISABLE_EXTRAS_COLORS = 0x0004;
     // Disable subscript and superscript text
     public static final int FLAG_PARSE_DISABLE_SUBSCRIPT   = 0x0008;
+    // Disable font altering component that may change text size
+    public static final int FLAG_PARSE_DISABLE_FONT_ALTERING   = 0x0010;
     // Disable all attributes changes
     public static final int FLAGS_DISABLE_ALL =
             FLAG_PARSE_DISABLE_COLORS | FLAG_PARSE_DISABLE_ATTRIBUTES;
@@ -52,6 +59,16 @@ public final class AnsiParser {
         return string.replace(ESCAPE1, "").replace(ESCAPE2, "");
     }
 
+    /**
+     * Remove all ANSI decoration for a given text
+     */
+    @Contract(pure = true, value = "null -> fail")
+    public static String removeAllDecorations(String string) {
+        synchronized (RESETTABLE_BUILDER) {
+            return parseWithBuilder(RESETTABLE_BUILDER, string, null, FLAGS_DISABLE_ALL);
+        }
+    }
+
     @Contract(pure = true)
     public static Spannable parseAsSpannable(@NonNull String text) {
         return parseAsSpannable(text, null);
@@ -72,11 +89,18 @@ public final class AnsiParser {
     @Contract(pure = true)
     public static Spannable parseAsSpannable(
             @NonNull String text, @Nullable AnsiContext ansiContext, int parseFlags) {
-        if (text.length() == 0) return new SpannableString(text);
-        ColorTransformer transformer = AnsiConstants.NO_OP_TRANSFORMER;
+        return parseWithBuilder(new SpannableAnsiComponentBuilder(), text, ansiContext, parseFlags);
+    }
+
+    public static <T extends CharSequence> T parseWithBuilder(
+            @NonNull AnsiComponentBuilder<T> builder, @NonNull String text,
+            @Nullable AnsiContext ansiContext, int parseFlags) {
+        if (text.isEmpty()) {
+            builder.notifyUse();
+            return builder.build();
+        }
         ansiContext = (ansiContext == null ? AnsiContext.DARK : ansiContext).asMutable();
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        int index = 0, indexEx = 0;
+        int index = 0, indexEx = 0, simulatedLength = 0;
         while (true) {
             int index1 = text.indexOf(ESCAPE1, indexEx);
             int index2 = text.indexOf(ESCAPE2, indexEx);
@@ -97,10 +121,11 @@ public final class AnsiParser {
             int currentEnd = index2 == -1 || (index1 != -1
                     && index1 < index2) ? index1 : index2;
             if (currentEnd != index) {
-                int nStart = spannableStringBuilder.length(),
-                        nEnd = nStart + (currentEnd - index);
-                spannableStringBuilder.append(text, index, currentEnd);
-                spannableStringBuilder.setSpan(ansiContext.toAnsiTextSpan(), nStart, nEnd, 0);
+                int addedLen = (currentEnd - index);
+                int nStart = simulatedLength,
+                        nEnd = nStart + addedLen;
+                simulatedLength += addedLen;
+                builder.appendWithSpan(text, index, currentEnd, ansiContext, nStart, nEnd);
             }
             index = indexEx = i + 1;
             try {
@@ -112,12 +137,11 @@ public final class AnsiParser {
         }
         int currentEnd = text.length();
         if (currentEnd != index) {
-            int nStart = spannableStringBuilder.length(),
-                    nEnd = nStart + (currentEnd - index);
-            spannableStringBuilder.append(text, index, currentEnd);
-            spannableStringBuilder.setSpan(ansiContext.toAnsiTextSpan(), nStart, nEnd, 0);
+            // int nStart = simulatedLength; // IDEA optimizations
+            int nEnd = simulatedLength + (currentEnd - index);
+            builder.appendWithSpan(text, index, currentEnd, ansiContext, simulatedLength, nEnd);
         }
-        return spannableStringBuilder;
+        return builder.build();
     }
 
     public static void parseTokens(String[] tokens, AnsiContext ansiContext,int parseFlags) {
@@ -134,7 +158,9 @@ public final class AnsiParser {
                         break;
                     case 1:
                         ansiContext.style &= ~AnsiConstants.FLAG_STYLE_DIM;
-                        ansiContext.style |= AnsiConstants.FLAG_STYLE_BOLD;
+                        if ((parseFlags & FLAG_PARSE_DISABLE_FONT_ALTERING) == 0) {
+                            ansiContext.style |= AnsiConstants.FLAG_STYLE_BOLD;
+                        }
                         break;
                     case 2:
                         ansiContext.style &= ~AnsiConstants.FLAG_STYLE_BOLD;
@@ -150,7 +176,9 @@ public final class AnsiParser {
                         ansiContext.style |= AnsiConstants.FLAG_STYLE_STRIKE;
                         break;
                     case 21:
-                        ansiContext.style &= ~AnsiConstants.FLAG_STYLE_BOLD;
+                        if ((parseFlags & FLAG_PARSE_DISABLE_FONT_ALTERING) == 0) {
+                            ansiContext.style &= ~AnsiConstants.FLAG_STYLE_BOLD;
+                        }
                         break;
                     case 22:
                         ansiContext.style &= ~(AnsiConstants.FLAG_STYLE_BOLD |

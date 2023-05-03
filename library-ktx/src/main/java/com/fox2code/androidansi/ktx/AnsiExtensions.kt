@@ -18,14 +18,17 @@ const val FLAG_ANSI_PARSE_DISABLE_COLORS: Int = AnsiParser.FLAG_PARSE_DISABLE_CO
 const val FLAG_ANSI_PARSE_DISABLE_ATTRIBUTES: Int = AnsiParser.FLAG_PARSE_DISABLE_ATTRIBUTES
 const val FLAG_ANSI_PARSE_DISABLE_EXTRAS_COLORS: Int = AnsiParser.FLAG_PARSE_DISABLE_EXTRAS_COLORS
 const val FLAG_ANSI_PARSE_DISABLE_SUBSCRIPT: Int = AnsiParser.FLAG_PARSE_DISABLE_SUBSCRIPT
+const val FLAG_ANSI_PARSE_DISABLE_FONT_ALTERING: Int = AnsiParser.FLAG_PARSE_DISABLE_FONT_ALTERING
 const val FLAGS_ANSI_PARSE_DISABLE_ALL: Int = AnsiParser.FLAGS_DISABLE_ALL
 
 @Contract(pure = true)
 inline fun String.patchAnsiEscapeSequences(): String = AnsiParser.patchEscapeSequences(this)
 @Contract(pure = true)
 inline fun String.removeAnsiEscapeSequences(): String = AnsiParser.removeEscapeSequences(this)
+@Contract(pure = true)
+inline fun String.removeAllAnsiDecorations(): String = AnsiParser.removeAllDecorations(this)
 
-inline fun String.parseAsAnsi(context: AnsiContext? = null, parseFlags: Int = 0): Spannable {
+inline fun String.parseAsAnsiSpannable(context: AnsiContext? = null, parseFlags: Int = 0): Spannable {
     return if (context == null) {
         AnsiParser.parseAsSpannable(this, parseFlags)
     } else {

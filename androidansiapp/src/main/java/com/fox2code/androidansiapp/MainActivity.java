@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.fox2code.androidansi.AnsiParser;
-import com.fox2code.androidansi.AnsiTextView;
 
 public class MainActivity extends AppCompatActivity {
 

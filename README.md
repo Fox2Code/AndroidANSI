@@ -24,13 +24,15 @@ for more info on ANSI escape codes.
 40–47 -> Set background color (See: [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors))  
 48 -> Set background color (Partial, see: [True-color](#supported-true-color-formats))  
 49 -> Reset background color  
-58 -> Set underline color (Only Android10+ & Partial, see: [True-color](#supported-true-color-formats))  
-59 -> Reset underline color (Only Android10+)  
+58\* -> Set underline color (Partial, see: [True-color](#supported-true-color-formats))  
+59\* -> Reset underline color  
 73 -> Superscript  
 74 -> Subscript  
 75 -> Neither superscript nor subscript  
 90–97 -> Set bright foreground color (See: [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors))  
 100–107 -> Set bright background color (See: [Wikipedia ANSI Page](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors))  
+
+\*: Only Android10+ and unavailable with material compose compatibility layer.
 
 ## Supported True color formats
 
@@ -70,9 +72,9 @@ repositories {
 
 
 dependencies {
-    implementation 'com.github.Fox2Code.AndroidANSI:library:1.1.0'
+    implementation 'com.github.Fox2Code.AndroidANSI:library:1.2.0'
     // You can also add the ktx module for the kotlin extension.
-    implementation 'com.github.Fox2Code.AndroidANSI:library-ktx:1.1.0'
+    implementation 'com.github.Fox2Code.AndroidANSI:library-ktx:1.2.0'
 }
 ```
 
