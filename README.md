@@ -125,3 +125,31 @@ textView.setAnsiText("\\e[1;38;2;164;198;57mAndroid\\e[0;35mAN\u001B[2mSI\u001B[
 ```
 
 Note: AnsiTextView support Emoji2 if the library `androidx.emoji2:emoji2-views-helper:*` is added.
+
+## How do I use in my modules?
+
+Just add this to your module and use the different variables.
+
+```sh
+if [ "$ANSI_SUPPORT" == "true" ]; then
+  ESC="$(echo -e "\033")"
+  RED="$ESC[91m"
+  ORANGE="$ESC[33m"
+  YELLOW="$ESC[93m"
+  GREEN="$ESC[92m"
+  CYAN="$ESC[96m"
+  BLUE="$ESC[94m"
+  PURPLE="$ESC[95m"
+  RESET="$ESC[0m"
+else
+  ESC=""
+  RED=""
+  ORANGE=""
+  YELLOW=""
+  GREEN=""
+  CYAN=""
+  BLUE=""
+  PURPLE=""
+  RESET=""
+fi
+```
